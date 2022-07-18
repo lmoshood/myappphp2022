@@ -23,7 +23,7 @@ if(isset($_POST["addproduct"]))
   
   
   if($db->query($sql)){
-      echo "<script> alert('Data submitted successfully')</script>";
+      echo "<script> alert('Product added successfully')</script>";
   }
 
 }
