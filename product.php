@@ -15,7 +15,7 @@ if(isset($_POST["addproduct"]))
   $image = $image.".".$imgExt;
   $upload_dir = 'images/';
   if($imageSize < 5000000){
-    move_uploaded_file($tmp_dir, $upload_dir.$image)
+    move_uploaded_file($tmp_dir, $upload_dir.$image);
   }
 
   $sql = "INSERT INTO product(productname, price, quantity, image) 
