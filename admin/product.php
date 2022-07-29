@@ -1,24 +1,30 @@
 <?php 
-include_once "dbconnect.php"; 
+include_once "../dbconnect.php"; 
 if(isset($_POST["addproduct"]))
 {
   $productname = $_POST["productname"];
   $price = $_POST["price"];
   $quantity = $_POST["quantity"];
+  
 
-  var_dump($_FILES["image"]);
+ 
+  //var_dump($_FILES["image"]);
+  
+  if($_FILES["image"]["name"] == NULL){
+    $nimage = 'noimage.jpg';
+  }else{
   $image = $_FILES["image"]["name"];
   $tmp_dir = $_FILES["image"]["tmp_name"];
   $imageSize = $_FILES["image"]["size"];
   $imgExt = strtolower(pathinfo($image, PATHINFO_EXTENSION));
 
   $nimage = uniqid(rand(), true).".".$imgExt;
-  $upload_dir = 'images/';
+  $upload_dir = '../images/';
 
   if($imageSize < 5000000){
     move_uploaded_file($tmp_dir, $upload_dir.$nimage);
   }
-
+  }
   $sql = "INSERT INTO product(productname, price, quantity, image) 
   values('$productname', '$price', '$quantity', '$nimage')";
   
@@ -26,6 +32,24 @@ if(isset($_POST["addproduct"]))
   if($db->query($sql)){
       echo "<script> alert('Product added successfully')</script>";
   }
+
+}
+
+
+// Delete product
+if(isset($_GET["productid"])){
+  $id =  $_GET["productid"];
+  $img =  $_GET["image"];
+  $sql = "DELETE FROM PRODUCT WHERE id=$id";
+  if($db->query($sql)){
+    echo "<script> alert('Product deleted successfully')</script>";
+   
+    $upload_dir = '../images/';
+    if(file_exists($upload_dir.$img) && ($upload_dir.$img != 'images/noimage.jpg')){
+    unlink($upload_dir.$img);
+    }
+    echo "<script> window.location.href='product.php'</script>";
+}
 
 }
 
@@ -51,7 +75,7 @@ if(isset($_POST["addproduct"]))
 </head>
 <body>
     <div class="container">
-<?php include_once "nav.php"; ?>
+<?php include_once "../nav.php"; ?>
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
   Add Product
@@ -114,21 +138,32 @@ if(isset($_POST["addproduct"]))
   </thead>
   <tbody>
     <?php
-    $sql = "SELECT * FROM PRODUCT";
+    $sql = "SELECT * FROM PRODUCT order by id desc";
     $result = $db->query($sql);
+    $no = 1;
     foreach($result as $row){
       ?>
     <tr>
-      <th scope="row">1</th>
+      <th scope="row"><?php echo $no; ?></th>
       <td><?php echo $row["productname"]; ?></td>
       <td><?php echo $row["price"]; ?></td>
       <td><?php echo $row["quantity"]; ?></td>
       <td>
    <img src="images/<?php echo $row["image"]; ?>"  class="img-fluid" alt="">
       </td>
-      <td>Edit/ Delete</td>
+      <td>
+        <a href="editproduct.php?productid=<?php echo $row["id"]; ?>">
+        <button class="btn btn-warning">Edit</button> 
+        </a>
+
+        <a href="?productid=<?php echo $row["id"]; ?>&image=<?php echo $row["image"]; ?>" >      
+          <button type="submit" name="delete" onclick="return confirm('Are you sure you want to delete the product')" class="btn btn-danger">Delete</button>
+          </a>
+
+    </td>
     </tr>
     <?php
+    $no++;
     }
    ?>
   </tbody>
