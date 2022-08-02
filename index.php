@@ -12,8 +12,8 @@ if(isset($_POST["addtocart"])){
           'itemid' => $_POST["id"],
           'itemname' => $_POST["productname"],
           'itemprice' => $_POST["price"],
-          'itemquantity' => $_POST["quantity"]
-          
+          'itemquantity' => $_POST["quantity"],
+          'itemimage' => $_POST["image"]
           );
           
           $_SESSION["cart"][$count] = $items;
@@ -27,7 +27,8 @@ $items = array(
 'itemid' => $_POST["id"],
 'itemname' => $_POST["productname"],
 'itemprice' => $_POST["price"],
-'itemquantity' => $_POST["quantity"]
+'itemquantity' => $_POST["quantity"],
+'itemimage' => $_POST["image"]
 
 );
 
@@ -78,6 +79,7 @@ $_SESSION["cart"]["0"] = $items;
 <input type="hidden" name="id" value="<?php echo $row["id"]; ?>">
 <input type="hidden" name="productname" value="<?php echo $row["productname"]; ?>">
 <input type="hidden" name="price" value="<?php echo $row["price"]; ?>">
+<input type="hidden" name="image" value="<?php echo $row["image"]; ?>">
 <input type="hidden" name="quantity" value="1">
 
   <img class="card-img-top" src="images/<?php echo $row["image"]; ?>" alt="Card image cap">
